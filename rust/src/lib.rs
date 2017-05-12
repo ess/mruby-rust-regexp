@@ -18,6 +18,9 @@ pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::m
 
   let rust_unescaped = mferuby::mruby_str_to_rust_string(unescaped).unwrap();
 
+  let escaped = cstr!(regex::escape(&rust_unescaped));
+
+  println!("Escaped {} -> {}", rust_unescaped, escaped)
 
   unsafe {
     sys::mrb_str_new_cstr(mrb, cstr!(regex::escape(&rust_unescaped)))
