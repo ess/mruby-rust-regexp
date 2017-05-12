@@ -20,10 +20,8 @@ pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::m
 
   let escaped = cstr!(regex::escape(&rust_unescaped));
 
-  println!("Escaped {} -> {}", rust_unescaped, escaped)
-
   unsafe {
-    sys::mrb_str_new_cstr(mrb, cstr!(regex::escape(&rust_unescaped)))
+    sys::mrb_str_new_cstr(mrb, escaped)
   }
 }
 
