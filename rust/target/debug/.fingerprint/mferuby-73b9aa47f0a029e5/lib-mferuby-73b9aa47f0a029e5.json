@@ -1,0 +1,1 @@
+{"rustc":6858120930567365360,"target":4994078811321169675,"profile":14528549471338536373,"local":{"variant":"Precalculated","fields":["5d973de47983cbe9cb6c6212ddcc0ac8dcfa4897"]},"features":"None","deps":[["libc v0.2.22",7118685150803405449],["libmruby-sys v0.1.0 (https://github.com/hone/mferuby.git?branch=wip#5d973de4)",3562365172482660503]],"rustflags":[]}

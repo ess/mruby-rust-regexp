@@ -1,0 +1,11 @@
+[package]
+name = "mruby-rust-regexp"
+version = "0.0.1"
+authors = ["Dennis Walters <pooster@gmail.com"]
+
+[dependencies]
+mferuby = { git = "https://github.com/hone/mferuby.git", branch = "wip" }
+regex = "0.2"
+
+[lib]
+crate-type = ["staticlib"]
