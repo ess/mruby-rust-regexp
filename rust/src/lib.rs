@@ -18,10 +18,10 @@ pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::m
 
   let rust_unescaped = mferuby::mruby_str_to_rust_string(unescaped).unwrap();
 
-  let escaped = cstr!(regex::escape(&rust_unescaped));
+  let escaped = regex::escape(&rust_unescaped);
 
   unsafe {
-    sys::mrb_str_new_cstr(mrb, escaped)
+    sys::mrb_str_new_cstr(mrb, cstr!(escaped))
   }
 }
 
@@ -29,7 +29,7 @@ pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::m
 pub extern "C" fn mrb_mruby_rust_regexp_gem_init(mrb: *mut sys::mrb_state) {
   unsafe {
     let rust_regexp_mod = sys::mrb_define_class(mrb, cstr!("RustRegexp"), sys::mrb_state_object_class(mrb));
-    sys::mrb_define_class_method(mrb, rust_regexp_mod, cstr!("escape"), regex::escape as sys::mrb_func_t, sys::MRB_ARGS_REQ(1));
+    sys::mrb_define_class_method(mrb, rust_regexp_mod, cstr!("escape"), mrb_rust_regex_escape as sys::mrb_func_t, sys::MRB_ARGS_REQ(1));
   }
 }
 
