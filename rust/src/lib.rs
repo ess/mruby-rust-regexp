@@ -44,6 +44,7 @@ pub extern "C" fn mrb_mruby_rust_regexp_gem_init(mrb: *mut sys::mrb_state) {
   unsafe {
     let rust_regexp_mod = sys::mrb_define_class(mrb, cstr!("RustRegexp"), sys::mrb_state_object_class(mrb));
     sys::mrb_define_class_method(mrb, rust_regexp_mod, cstr!("escape"), mrb_rust_regex_escape as sys::mrb_func_t, sys::MRB_ARGS_REQ(1));
+    sys::mrb_define_class_method(mrb, rust_regexp_mod, cstr!("match"), mrb_rust_regex_match as sys::mrb_func_t, sys::MRB_ARGS_REQ(2));
   }
 }
 
