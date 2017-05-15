@@ -29,23 +29,52 @@ pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::m
 pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_value) -> sys::mrb_value {
   let mut pattern: sys::mrb_value = unsafe {mem::uninitialized()};
   let mut input: sys::mrb_value = unsafe {mem::uninitialized()};
+  //let mut ignore_case: bool;
+  //let mut multi_line: bool;
 
   unsafe {
+    //sys::mrb_get_args(mrb, cstr!("SSbb"), &mut pattern, &mut input, &mut ignore_case, &mut multi_line);
     sys::mrb_get_args(mrb, cstr!("SS"), &mut pattern, &mut input);
   }
 
   let rpattern = mferuby::mruby_str_to_rust_string(pattern).unwrap().as_str();
   let rinput = mferuby::mruby_str_to_rust_string(input).unwrap();
 
-  let re = regex::Regex::new(rpattern).unwrap();
+  let mut builder = regex::RegexBuilder::new(rpattern);
+  
+  //if ignore_case {
+  //  builder.case_insensitive(true);
+  //}
 
-  if rinput.contains(&re) {
-    println!("{} matches {}", rinput, rpattern);
-  } else {
-    println!("{} does not match {}", rinput, rpattern);
+  //if multi_line {
+  //  builder.multi_line(true);
+  //}
+
+  let re = builder.build().unwrap();
+
+  unsafe {
+    let retval = sys::mrb_ary_new(mrb);
+
+    let matches = sys::mrb_ary_new(mrb);
+
+    //let captures = sys::mrb_ary_new(mrb);
+    
+    //let named_captures = sys::mrb_ary_new(mrb);
+
+    for mat in re.find_iter(text) {
+      let row = sys::mrb_ary_new(mrb);
+
+      sys::mrb_ary_push(mrb, row, sys::fixnum(mat.begin() as c_int));
+      sys::mrb_ary_push(mrb, row, sys::fixnum(mat.end() as c_int));
+
+      sys::mrb_ary_push(mrb, matches, row);
+    }
+
+    sys::mrb_ary_push(mrb, retval, matches);
+    
+    retval
   }
 
-  unsafe {sys::nil()}
 }
 
 #[no_mangle]
