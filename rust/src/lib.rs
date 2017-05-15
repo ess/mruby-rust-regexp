@@ -34,8 +34,8 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
     sys::mrb_get_args(mrb, cstr!("SS"), &mut pattern, &mut input);
   }
 
-  let rpattern = mferuby::mruby_str_to_rust_string(pattern).unwrap().to_str();
-  let rinput = mferuby::mruby_str_to_rust_string(input).unwrap().to_str();
+  let rpattern = mferuby::mruby_str_to_rust_string(pattern).unwrap().as_str();
+  let rinput = mferuby::mruby_str_to_rust_string(input).unwrap().as_str();
 
   let re = regex::Regex::new(rpattern).unwrap();
 
