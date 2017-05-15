@@ -34,7 +34,16 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
     sys::mrb_get_args(mrb, cstr!("SS"), &mut pattern, &mut input);
   }
 
-  println!("matching {} against {}", mferuby::mruby_str_to_rust_string(input).unwrap(), mferuby::mruby_str_to_rust_string(pattern).unwrap());
+  let rpattern = mferuby::mruby_str_to_rust_string(pattern).unwrap();
+  let rinput = mferuby::mruby_str_to_rust_string(input).unwrap();
+
+  let re = regex::Regex::new(rpattern).unwrap();
+
+  if rinput.contains(&re) {
+    println!("{} matches {}", rinput, rpattern);
+  } else {
+    println!("{} does not match {}", rinput, rpattern);
+  }
 
   unsafe {sys::nil()}
 }
