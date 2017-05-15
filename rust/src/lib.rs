@@ -13,7 +13,7 @@ pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::m
   let mut unescaped: sys::mrb_value = unsafe {mem::uninitialized()};
 
   unsafe {
-    sys::mrb_get_args(mrb, cstr!("SS"), &mut unescaped);
+    sys::mrb_get_args(mrb, cstr!("S"), &mut unescaped);
   }
 
   let rust_unescaped = mferuby::mruby_str_to_rust_string(unescaped).unwrap();
@@ -31,7 +31,7 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
   let mut input: sys::mrb_value = unsafe {mem::uninitialized()};
 
   unsafe {
-    sys::mrb_get_args(mrb, cstr!("S"), &mut pattern, &mut input);
+    sys::mrb_get_args(mrb, cstr!("SS"), &mut pattern, &mut input);
   }
 
   println!("matching {} against {}", mferuby::mruby_str_to_rust_string(input).unwrap(), mferuby::mruby_str_to_rust_string(pattern).unwrap());
