@@ -62,7 +62,7 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
     
     //let named_captures = sys::mrb_ary_new(mrb);
 
-    for mat in re.find_iter(text) {
+    for mat in re.find_iter(rinput) {
       let row = sys::mrb_ary_new(mrb);
 
       sys::mrb_ary_push(mrb, row, sys::fixnum(mat.start() as c_int));
