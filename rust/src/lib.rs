@@ -34,7 +34,7 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
     sys::mrb_get_args(mrb, cstr!("S"), &mut pattern, &mut input);
   }
 
-  println!("matching {} against {}", mruby_str_to_rust_string(input).unwrap(), mruby_str_to_rust_string(pattern).unwrap());
+  println!("matching {} against {}", mferuby::mruby_str_to_rust_string(input).unwrap(), mferuby::mruby_str_to_rust_string(pattern).unwrap());
 
   sys::nil()
 }
