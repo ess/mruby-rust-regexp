@@ -36,7 +36,7 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
 
   println!("matching {} against {}", mferuby::mruby_str_to_rust_string(input).unwrap(), mferuby::mruby_str_to_rust_string(pattern).unwrap());
 
-  sys::nil()
+  unsafe {sys::nil()}
 }
 
 #[no_mangle]
