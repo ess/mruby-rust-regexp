@@ -26,7 +26,7 @@ pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::m
 }
 
 #[no_mangle]
-pub extern "C" fn mrb_rust_regex_match(mrb: *must sys::mrb_state, this: sys::mrb_value) -> sys::mrb_value {
+pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_value) -> sys::mrb_value {
   let mut pattern: sys::mrb_value = unsafe {mem::uninitialized()};
   let mut input: sys::mrb_value = unsafe {mem::uninitialized()};
 
