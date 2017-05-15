@@ -7,6 +7,7 @@ extern crate regex;
 use mferuby::sys;
 use std::ffi::CString;
 use std::mem;
+use mferuby::libc::{c_int};
 
 #[no_mangle]
 pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::mrb_value) -> sys::mrb_value {
@@ -64,7 +65,7 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
     for mat in re.find_iter(text) {
       let row = sys::mrb_ary_new(mrb);
 
-      sys::mrb_ary_push(mrb, row, sys::fixnum(mat.begin() as c_int));
+      sys::mrb_ary_push(mrb, row, sys::fixnum(mat.start() as c_int));
       sys::mrb_ary_push(mrb, row, sys::fixnum(mat.end() as c_int));
 
       sys::mrb_ary_push(mrb, matches, row);
