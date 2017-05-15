@@ -26,6 +26,20 @@ pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::m
 }
 
 #[no_mangle]
+pub extern "C" fn mrb_rust_regex_match(mrb: *must sys::mrb_state, this: sys::mrb_value) -> sys::mrb_value {
+  let mut pattern: sys::mrb_value = unsafe {mem::uninitialized()};
+  let mut input: sys::mrb_value = unsafe {mem::uninitialized()};
+
+  unsafe {
+    sys::mrb_get_args(mrb, cstr!("S"), &mut pattern, &mut input);
+  }
+
+  println!("matching {} against {}", mruby_str_to_rust_string(input).unwrap(), mruby_str_to_rust_string(pattern).unwrap());
+
+  sys::mrb_nil_value()
+}
+
+#[no_mangle]
 pub extern "C" fn mrb_mruby_rust_regexp_gem_init(mrb: *mut sys::mrb_state) {
   unsafe {
     let rust_regexp_mod = sys::mrb_define_class(mrb, cstr!("RustRegexp"), sys::mrb_state_object_class(mrb));
