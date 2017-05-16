@@ -30,7 +30,7 @@ class RustRegexp
     return nil if submatches.empty?
 
     match_data = self.class.set_last_match(
-      RustMatchData.new(source.gsub("(?<", "(?P<"), substring, submatches)
+      RustMatchData.new(self.class.oxidize(source), substring, submatches)
     )
 
     if block_given?
