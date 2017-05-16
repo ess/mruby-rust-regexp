@@ -114,6 +114,9 @@ class RustMatchData
   end
 
   private
+  def submatches
+    @submatches ||= []
+  end
 
   def record_submatch(submatch)
     submatches.push(submatch)
