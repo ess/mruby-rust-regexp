@@ -16,7 +16,6 @@ class RustRegexp
     @multi_line = option.include? 'm'
   end
 
-  
   def match(string, position = 0)
     return nil if position >= string.length
 
@@ -33,7 +32,8 @@ class RustRegexp
       yield(match_data)
     end
 
-    self.class.set_last_match(match_data)
+    match_data
+
   end
 
   def self.set_last_match(match_data)
@@ -57,7 +57,7 @@ class RustMatchData
     end
 
     def named?
-      name == nil
+      !name.nil?
     end
   end
 
@@ -67,7 +67,7 @@ class RustMatchData
     @regexp = regexp
     @string = string
 
-    submatches.map {|s| Submatch.new(s)} do |submatch|
+    submatches.map {|s| Submatch.new(*s)} do |submatch|
       case submatch.named?
       when true
         record_named_submatch(submatch)
@@ -85,5 +85,4 @@ class RustMatchData
   def record_named_submatch(submatch)
     named_submatches[submatch.name] ||= submatch
   end
-
 end
