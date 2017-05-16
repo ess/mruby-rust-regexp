@@ -75,7 +75,7 @@ class RustMatchData
     @regexp = regexp
     @string = string
 
-    submatches = submatches.map {|s| Submatch.new(*s)}
+    submatches = submatches.map {|s| puts "s == '#{s}'" ; Submatch.new(*s)}
 
     # Always grab the first submatch, as it is the "main" match.
     record_submatch(submatches.shift)
