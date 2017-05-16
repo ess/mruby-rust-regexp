@@ -25,12 +25,15 @@ class RustRegexp
     return nil if position >= string.length
 
     substring = string[position, string.length]
-    submatches = self.class.get_submatches(source, substring)
+    submatches = self.class.get_submatches(
+      self.class.oxidize(source),
+      substring
+    )
 
     return nil if submatches.empty?
 
     match_data = self.class.set_last_match(
-      RustMatchData.new(self.class.oxidize(source), substring, submatches)
+      RustMatchData.new(source, substring, submatches)
     )
 
     if block_given?
