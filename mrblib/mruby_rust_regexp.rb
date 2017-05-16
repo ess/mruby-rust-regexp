@@ -62,8 +62,6 @@ class RustMatchData
       @back = back
       @content = content
       @name = name
-
-      puts "new submatch - front: '#{front}', back: '#{back}', content: '#{content}', name: '#{name}'"
     end
 
     def named?
@@ -77,11 +75,8 @@ class RustMatchData
     @regexp = regexp
     @string = string
 
-    submatches = submatches.map {|s| puts "s == '#{s}'" ; Submatch.new(*s)}
+    submatches = submatches.map {|s| Submatch.new(*s)}
 
-    submatches.each do |submatch|
-      puts "submatch: #{submatch}"
-    end
     # Always grab the first submatch, as it is the "main" match.
     record_submatch(submatches.shift)
 
