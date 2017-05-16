@@ -25,7 +25,7 @@ class RustRegexp
 
     return nil if submatches.empty?
 
-    match_data = RustMatchData.new(source, substring, submatches))
+    match_data = RustMatchData.new(source, substring, submatches)
 
     if block_given?
       yield(match_data)
