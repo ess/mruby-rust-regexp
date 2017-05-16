@@ -77,6 +77,9 @@ class RustMatchData
 
     submatches = submatches.map {|s| puts "s == '#{s}'" ; Submatch.new(*s)}
 
+    submatches.each do |submatch|
+      puts "submatch: #{submatch}"
+    end
     # Always grab the first submatch, as it is the "main" match.
     record_submatch(submatches.shift)
 
