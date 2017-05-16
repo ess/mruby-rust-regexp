@@ -36,7 +36,6 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
   unsafe {
     //sys::mrb_get_args(mrb, cstr!("SSbb"), &mut pattern, &mut input, &mut ignore_case, &mut multi_line);
     sys::mrb_get_args(mrb, cstr!("SS"), &mut pattern, &mut input);
-  }
 
   let rpattern = mferuby::mruby_str_to_rust_string(pattern).unwrap().as_str();
   let rinput = mferuby::mruby_str_to_rust_string(input).unwrap().as_str();
@@ -53,7 +52,6 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
 
   let re = builder.build().unwrap();
 
-  unsafe {
     let retval = sys::mrb_ary_new(mrb);
 
     let matches = sys::mrb_ary_new(mrb);
