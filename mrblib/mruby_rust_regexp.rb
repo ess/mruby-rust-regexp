@@ -62,6 +62,8 @@ class RustMatchData
       @back = back
       @content = content
       @name = name
+
+      puts "new submatch - front: '#{front}', back: '#{back}', content: '#{content}', name: '#{name}'"
     end
 
     def named?
