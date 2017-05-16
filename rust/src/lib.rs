@@ -37,20 +37,20 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
     //sys::mrb_get_args(mrb, cstr!("SSbb"), &mut pattern, &mut input, &mut ignore_case, &mut multi_line);
     sys::mrb_get_args(mrb, cstr!("SS"), &mut pattern, &mut input);
 
-  let rpattern = mferuby::mruby_str_to_rust_string(pattern).unwrap().as_str();
-  let rinput = mferuby::mruby_str_to_rust_string(input).unwrap().as_str();
+    let rpattern = mferuby::mruby_str_to_rust_string(pattern).unwrap();
+    let rinput = mferuby::mruby_str_to_rust_string(input).unwrap();
 
-  let mut builder = regex::RegexBuilder::new(rpattern);
-  
-  //if ignore_case {
-  //  builder.case_insensitive(true);
-  //}
+    let mut builder = regex::RegexBuilder::new(rpattern.as_str());
+    
+    //if ignore_case {
+    //  builder.case_insensitive(true);
+    //}
 
-  //if multi_line {
-  //  builder.multi_line(true);
-  //}
+    //if multi_line {
+    //  builder.multi_line(true);
+    //}
 
-  let re = builder.build().unwrap();
+    let re = builder.build().unwrap();
 
     let retval = sys::mrb_ary_new(mrb);
 
@@ -60,7 +60,7 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
     
     //let named_captures = sys::mrb_ary_new(mrb);
 
-    for mat in re.find_iter(rinput) {
+    for mat in re.find_iter(rinput.as_str()) {
       let row = sys::mrb_ary_new(mrb);
 
       sys::mrb_ary_push(mrb, row, sys::fixnum(mat.start() as c_int));
