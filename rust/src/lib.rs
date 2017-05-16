@@ -60,20 +60,69 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
     
     //let named_captures = sys::mrb_ary_new(mrb);
 
-    match re.find(rinput.as_str()) {
-      Some(mat) => {
-        let row = sys::mrb_ary_new(mrb);
+    if !re.is_match(rinput.as_str()) {
+      // Go ahead and stop here. It's not a match, so there's nothing more
+      // to do.
+      return retval
+    }
 
-        sys::mrb_ary_push(mrb, row, sys::fixnum(mat.start() as c_int));
-        sys::mrb_ary_push(mrb, row, sys::fixnum(mat.end() as c_int));
-        sys::mrb_ary_push(mrb, row, sys::nil());
+    for caps in re.captures_iter(rinput.as_str()) {
+      for sub in caps.iter() {
+        match sub {
+          None => {},
+          Some(sub) => {
+            let row = sys::mrb_ary_new(mrb);
 
-        sys::mrb_ary_push(mrb, retval, row);
-      },
-      None => {
-        return retval
+            sys::mrb_ary_push(mrb, row, sys::fixnum(sub.start() as c_int));
+            sys::mrb_ary_push(mrb, row, sys::fixnum(sub.end() as c_int));
+            sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(sub.as_str())));
+            sys::mrb_ary_push(mrb, row, sys::nil());
+
+            sys::mrb_ary_push(mrb, retval, row);
+          },
+        }
+      }
+
+      for name in re.capture_names() {
+        match name {
+          Some(name) => {
+            match caps.name(name) {
+              Some(named) => {
+                let row = sys::mrb_ary_new(mrb);
+                sys::mrb_ary_push(mrb, row, sys::fixnum(named.start() as c_int));
+                sys::mrb_ary_push(mrb, row, sys::fixnum(named.end() as c_int));
+                sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(named.as_str())));
+                sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(name)));
+                sys::mrb_ary_push(mrb, retval, row);
+              },
+              None => {},
+            }
+          },
+          None => {},
+        }
       }
     }
+
+    //match re.find(rinput.as_str()) {)
+    //  Some(mat) => {
+    //    let row = sys::mrb_ary_new(mrb);
+    //    sys::mrb_ary_push(mrb, row, sys::fixnum(mat.start() as c_int));
+    //    sys::mrb_ary_push(mrb, row, sys::fixnum(mat.end() as c_int));
+    //    sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(mat.as_str())));
+    //    sys::mrb_ary_push(mrb, row, sys::nil());
+    //    sys::mrb_ary_push(mrb, retval, row);
+    //  },
+    //  None => {
+    //    // Go ahead and stop here, because there aren't any matches, so there
+    //    // aren't any captures.
+    //    return retval
+    //  }
+    //}
+
+    //match re.captures(rinput.as_str()) {
+    //  Some(caps) => {},
+    //  None => {}
+    //}
 
     retval
   }
