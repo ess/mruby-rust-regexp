@@ -1,7 +1,7 @@
 class RustRegexp
   @memo = {}
 
-  attr_reader :source
+  attr_reader :source, :ignore_case, :multi_line
 
   def self.compile(*args)
     as = args.to_s
@@ -13,19 +13,34 @@ class RustRegexp
 
   def initialize(pattern, option = nil)
     @source = pattern
-    @option = 0
     @ignore_case = option.include? 'i'
     @multi_line = option.include? 'm'
   end
 
-  def match(string, position = nil)
-    matches = self.class.match(string)
+  def match(string, position = 0)
+    return nil if position >= string.length
 
-    return nil if matches.empty?
+    substring = string[position, string.length]
+    submatches = self.class.get_submatches(source, substring)
 
-    matches
+    return nil if submatches.empty?
+
+    match_data = RustMatchData.new(source, substring, submatches))
+
+    if block_given?
+      yield(match_data)
+    end
+
+    match_data
   end
 end
 
 class RustMatchData
+  attr_reader :string, :regexp
+
+  def initialize(regexp, string, submatches)
+    @regexp = regexp
+    @string = string
+
+  end
 end

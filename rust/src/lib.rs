@@ -56,21 +56,23 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
 
     let matches = sys::mrb_ary_new(mrb);
 
-    //let captures = sys::mrb_ary_new(mrb);
+    let captures = sys::mrb_ary_new(mrb);
     
     //let named_captures = sys::mrb_ary_new(mrb);
 
-    for mat in re.find_iter(rinput.as_str()) {
-      let row = sys::mrb_ary_new(mrb);
+    match re.find(rinput.as_str()) {
+      Some(mat) => {
+        let row = sys::mrb_ary_new(mrb);
 
-      sys::mrb_ary_push(mrb, row, sys::fixnum(mat.start() as c_int));
-      sys::mrb_ary_push(mrb, row, sys::fixnum(mat.end() as c_int));
-
-      sys::mrb_ary_push(mrb, matches, row);
+        sys::mrb_ary_push(mrb, row, sys::fixnum(mat.start() as c_int));
+        sys::mrb_ary_push(mrb, row, sys::fixnum(mat.end() as c_int));
+        sys::mrb_ary_push(mrb, row, sys::nil());
+      },
+      None => {
+        return retval
+      }
     }
 
-    sys::mrb_ary_push(mrb, retval, matches);
-    
     retval
   }
 
@@ -81,7 +83,7 @@ pub extern "C" fn mrb_mruby_rust_regexp_gem_init(mrb: *mut sys::mrb_state) {
   unsafe {
     let rust_regexp_mod = sys::mrb_define_class(mrb, cstr!("RustRegexp"), sys::mrb_state_object_class(mrb));
     sys::mrb_define_class_method(mrb, rust_regexp_mod, cstr!("escape"), mrb_rust_regex_escape as sys::mrb_func_t, sys::MRB_ARGS_REQ(1));
-    sys::mrb_define_class_method(mrb, rust_regexp_mod, cstr!("match"), mrb_rust_regex_match as sys::mrb_func_t, sys::MRB_ARGS_REQ(2));
+    sys::mrb_define_class_method(mrb, rust_regexp_mod, cstr!("get_submatches"), mrb_rust_regex_match as sys::mrb_func_t, sys::MRB_ARGS_REQ(2));
   }
 }
 
