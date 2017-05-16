@@ -118,7 +118,7 @@ class RustMatchData
   end
 
   def inspect
-    m = to_s.inspect
+    m = [to_s.inspect]
     submatches[1 .. -1].each do |cap|
       if cap.named?
         m << "#{cap.name}:#{cap.content}"
