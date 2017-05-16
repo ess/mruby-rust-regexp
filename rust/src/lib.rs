@@ -40,7 +40,7 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
     let rpattern = mferuby::mruby_str_to_rust_string(pattern).unwrap();
     let rinput = mferuby::mruby_str_to_rust_string(input).unwrap();
 
-    let mut builder = regex::RegexBuilder::new(rpattern.as_str());
+    let builder = regex::RegexBuilder::new(rpattern.as_str());
     
     //if ignore_case {
     //  builder.case_insensitive(true);
@@ -54,10 +54,6 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
 
     let retval = sys::mrb_ary_new(mrb);
 
-    let matches = sys::mrb_ary_new(mrb);
-
-    let captures = sys::mrb_ary_new(mrb);
-    
     //let named_captures = sys::mrb_ary_new(mrb);
 
     if !re.is_match(rinput.as_str()) {

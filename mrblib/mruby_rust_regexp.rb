@@ -118,6 +118,22 @@ class RustMatchData
     a
   end
 
+  def to_s
+    to_a.first.content
+  end
+
+  def inspect
+    m = to_s.inspect
+    captures.each do |cap|
+      if cap.named?
+        m << "#{cap.name}:#{cap.content}"
+      else
+        m << "#{captures.index(cap) + 1}:#{cap.content}"
+      end
+    end
+    "#<RustMatchData #{m.join(' ')}>"
+  end
+
   private
   def submatches
     @submatches ||= []
