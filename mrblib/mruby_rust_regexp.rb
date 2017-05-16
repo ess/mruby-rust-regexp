@@ -10,6 +10,10 @@ class RustRegexp
     @memo[as]
   end
 
+  def self.oxidize(pattern)
+    pattern.gsub('(?<', '(?P<')
+  end
+
   def initialize(pattern, option = nil)
     @source = pattern
     @ignore_case = option.include? 'i'
@@ -25,7 +29,7 @@ class RustRegexp
     return nil if submatches.empty?
 
     match_data = self.class.set_last_match(
-      RustMatchData.new(source, substring, submatches)
+      RustMatchData.new(source.gsub("(?<", "(?P<"), substring, submatches)
     )
 
     if block_given?
