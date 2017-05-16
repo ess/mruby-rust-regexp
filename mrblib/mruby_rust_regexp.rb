@@ -57,7 +57,7 @@ class RustMatchData
   class Submatch
     attr_reader :front, :back, :content, :name
 
-    def init(front, back, content, name)
+    def initialize(front, back, content, name)
       @front = front
       @back = back
       @content = content
