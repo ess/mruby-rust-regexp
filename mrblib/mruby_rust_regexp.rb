@@ -67,20 +67,23 @@ class RustMatchData
     @regexp = regexp
     @string = string
 
-    submatches.each do |submatch|
-      case submatch.last
-      when nil
-        record_submatch(submatch)
+    submatches.map {|s| Submatch.new(s)} do |submatch|
+      case submatch.named?
+      when true
+        record_named_submatch(submatch)
       else
-        record_named_capture(submatch)
+        record_submatch(submatch)
       end
     end
   end
 
   private
   def record_submatch(submatch)
-    submatches.push([submatch[0], submatch[1]])
+    submatches.push(submatch)
   end
 
+  def record_named_submatch(submatch)
+    named_submatches[submatch.name] ||= submatch
+  end
 
 end

@@ -66,41 +66,45 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
       return retval
     }
 
-    for caps in re.captures_iter(rinput.as_str()) {
-      for sub in caps.iter() {
-        match sub {
-          None => {},
-          Some(sub) => {
-            let row = sys::mrb_ary_new(mrb);
+    match re.captures(rinput.as_str()) {
+      Some(caps) => {
+        for sub in caps.iter() {
+          match sub {
+            None => {},
+            Some(sub) => {
+              let row = sys::mrb_ary_new(mrb);
 
-            sys::mrb_ary_push(mrb, row, sys::fixnum(sub.start() as c_int));
-            sys::mrb_ary_push(mrb, row, sys::fixnum(sub.end() as c_int));
-            sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(sub.as_str())));
-            sys::mrb_ary_push(mrb, row, sys::nil());
+              sys::mrb_ary_push(mrb, row, sys::fixnum(sub.start() as c_int));
+              sys::mrb_ary_push(mrb, row, sys::fixnum(sub.end() as c_int));
+              sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(sub.as_str())));
+              sys::mrb_ary_push(mrb, row, sys::nil());
 
-            sys::mrb_ary_push(mrb, retval, row);
-          },
+              sys::mrb_ary_push(mrb, retval, row);
+            },
+          }
         }
-      }
 
-      for name in re.capture_names() {
-        match name {
-          Some(name) => {
-            match caps.name(name) {
-              Some(named) => {
-                let row = sys::mrb_ary_new(mrb);
-                sys::mrb_ary_push(mrb, row, sys::fixnum(named.start() as c_int));
-                sys::mrb_ary_push(mrb, row, sys::fixnum(named.end() as c_int));
-                sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(named.as_str())));
-                sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(name)));
-                sys::mrb_ary_push(mrb, retval, row);
-              },
-              None => {},
-            }
-          },
-          None => {},
+        for name in re.capture_names() {
+          match name {
+            Some(name) => {
+              match caps.name(name) {
+                Some(named) => {
+                  let row = sys::mrb_ary_new(mrb);
+                  sys::mrb_ary_push(mrb, row, sys::fixnum(named.start() as c_int));
+                  sys::mrb_ary_push(mrb, row, sys::fixnum(named.end() as c_int));
+                  sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(named.as_str())));
+                  sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(name)));
+                  sys::mrb_ary_push(mrb, retval, row);
+                },
+                None => {},
+              }
+            },
+            None => {},
+          }
         }
-      }
+
+      },
+      None => {},
     }
 
     //match re.find(rinput.as_str()) {)
