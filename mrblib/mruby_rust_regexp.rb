@@ -67,7 +67,7 @@ class RustMatchData
     @regexp = regexp
     @string = string
 
-    submatches.map {|s| Submatch.new(*s)} do |submatch|
+    submatches.map {|s| Submatch.new(*s)}.each do |submatch|
       case submatch.named?
       when true
         record_named_submatch(submatch)
