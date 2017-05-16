@@ -1,5 +1,6 @@
 class RustRegexp
   @memo = {}
+
   attr_reader :source, :ignore_case, :multi_line
 
   def self.compile(*args)
@@ -71,17 +72,46 @@ class RustMatchData
     @regexp = regexp
     @string = string
 
-    submatches.map {|s| Submatch.new(*s)}.each do |submatch|
-      case submatch.named?
-      when true
-        record_named_submatch(submatch)
-      else
-        record_submatch(submatch)
-      end
+    submatches = submatches.map {|s| Submatch.new(*s)}
+
+    # Always grab the first submatch, as it is the "main" match.
+    record_submatch(submatches.shift)
+
+    # Are there named submatches?
+    named = submatches.any? {|s| s.named?}
+
+    # Fun fact: to emulate Ruby's standard Regexp, we have to ignore unnamed
+    # captures if there are any named captures.
+    (named ? submatches.select {|s| s.named?} : submatches).each do |submatch|
+      record_submatch(submatch)
     end
   end
 
+  def [](*args)
+    key = args.first
+
+    if args.size == 1 && (key.is_a? String)
+
+      retval = submatches.find {|submatch| submatch.name == key}
+      raise IndexError if retval.nil?
+      return retval
+    end
+
+    to_a[*args]
+  end
+
+  def to_a
+    submatches.map(&:content)
+  end
+
+  def captures
+    a = to_a
+    a.shift
+    a
+  end
+
   private
+
   def record_submatch(submatch)
     submatches.push(submatch)
   end
