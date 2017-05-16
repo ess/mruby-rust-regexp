@@ -114,7 +114,7 @@ class RustMatchData
   end
 
   def to_s
-    to_a.first.content
+    to_a.first
   end
 
   def inspect
