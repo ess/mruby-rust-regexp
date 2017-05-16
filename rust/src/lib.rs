@@ -67,6 +67,8 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
         sys::mrb_ary_push(mrb, row, sys::fixnum(mat.start() as c_int));
         sys::mrb_ary_push(mrb, row, sys::fixnum(mat.end() as c_int));
         sys::mrb_ary_push(mrb, row, sys::nil());
+
+        sys::mrb_ary_push(mrb, retval, row);
       },
       None => {
         return retval
