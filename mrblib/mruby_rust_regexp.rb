@@ -1,6 +1,5 @@
 class RustRegexp
   @memo = {}
-
   attr_reader :source, :ignore_case, :multi_line
 
   def self.compile(*args)
@@ -17,6 +16,7 @@ class RustRegexp
     @multi_line = option.include? 'm'
   end
 
+  
   def match(string, position = 0)
     return nil if position >= string.length
 
