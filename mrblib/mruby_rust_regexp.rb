@@ -15,7 +15,7 @@ class RustRegexp
     pattern.gsub('(?<', '(?P<')
   end
 
-  def initialize(pattern, option = nil)
+  def initialize(pattern, option = "")
     @source = pattern
     @ignore_case = option.include? 'i'
     @multi_line = option.include? 'm'
