@@ -39,7 +39,7 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
   }
 
   let rpattern = mferuby::mruby_str_to_rust_string(pattern).unwrap().as_str();
-  let rinput = mferuby::mruby_str_to_rust_string(input).unwrap();
+  let rinput = mferuby::mruby_str_to_rust_string(input).unwrap().as_str();
 
   let mut builder = regex::RegexBuilder::new(rpattern);
   
