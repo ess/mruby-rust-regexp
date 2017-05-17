@@ -10,7 +10,8 @@ use std::mem;
 use mferuby::libc::{c_int};
 
 #[no_mangle]
-pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::mrb_value) -> sys::mrb_value {
+#[allow(unused_variables)]
+pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, this: sys::mrb_value) -> sys::mrb_value {
   let mut unescaped: sys::mrb_value = unsafe {mem::uninitialized()};
 
   unsafe {
@@ -27,6 +28,7 @@ pub extern "C" fn mrb_rust_regex_escape(mrb: *mut sys::mrb_state, selfie: sys::m
 }
 
 #[no_mangle]
+#[allow(unused_variables)]
 pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_value) -> sys::mrb_value {
   let mut pattern: sys::mrb_value = unsafe {mem::uninitialized()};
   let mut input: sys::mrb_value = unsafe {mem::uninitialized()};
@@ -66,7 +68,17 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
       Some(caps) => {
         for sub in caps.iter() {
           match sub {
-            None => {},
+            None => {
+              let row = sys::mrb_ary_new(mrb);
+
+              sys::mrb_ary_push(mrb, row, sys::nil());
+              sys::mrb_ary_push(mrb, row, sys::nil());
+              sys::mrb_ary_push(mrb, row, sys::nil());
+              sys::mrb_ary_push(mrb, row, sys::nil());
+
+              sys::mrb_ary_push(mrb, retval, row);
+
+            },
             Some(sub) => {
               let row = sys::mrb_ary_new(mrb);
 
@@ -92,7 +104,17 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
                   sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(name)));
                   sys::mrb_ary_push(mrb, retval, row);
                 },
-                None => {},
+                None => {
+                  let row = sys::mrb_ary_new(mrb);
+
+                  sys::mrb_ary_push(mrb, row, sys::nil());
+                  sys::mrb_ary_push(mrb, row, sys::nil());
+                  sys::mrb_ary_push(mrb, row, sys::nil());
+                  sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(name)));
+
+                  sys::mrb_ary_push(mrb, retval, row);
+
+                },
               }
             },
             None => {},
@@ -102,27 +124,6 @@ pub extern "C" fn mrb_rust_regex_match(mrb: *mut sys::mrb_state, this: sys::mrb_
       },
       None => {},
     }
-
-    //match re.find(rinput.as_str()) {)
-    //  Some(mat) => {
-    //    let row = sys::mrb_ary_new(mrb);
-    //    sys::mrb_ary_push(mrb, row, sys::fixnum(mat.start() as c_int));
-    //    sys::mrb_ary_push(mrb, row, sys::fixnum(mat.end() as c_int));
-    //    sys::mrb_ary_push(mrb, row, sys::mrb_str_new_cstr(mrb, cstr!(mat.as_str())));
-    //    sys::mrb_ary_push(mrb, row, sys::nil());
-    //    sys::mrb_ary_push(mrb, retval, row);
-    //  },
-    //  None => {
-    //    // Go ahead and stop here, because there aren't any matches, so there
-    //    // aren't any captures.
-    //    return retval
-    //  }
-    //}
-
-    //match re.captures(rinput.as_str()) {
-    //  Some(caps) => {},
-    //  None => {}
-    //}
 
     retval
   }
