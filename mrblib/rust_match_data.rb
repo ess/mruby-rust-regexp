@@ -66,8 +66,9 @@ class RustMatchData
     m = [to_s.inspect]
 
     submatches[1 .. -1].each do |cap|
-      puts "index of '#{cap}': #{captures.index(cap)}"
-      m << "#{cap.named? ? cap.name : (captures.index(cap) + 1)}:#{cap.content.inspect}"
+      puts "captures: '#{captures}'"
+      puts "captures.index of '#{cap.content}': #{captures.index(cap.content)}"
+      m << "#{cap.named? ? cap.name : (captures.index(cap.content) + 1)}:#{cap.content.inspect}"
     end
 
     "#<RustMatchData #{m.join(' ')}>"
