@@ -6,6 +6,7 @@ MRuby::Gem::Specification.new('mruby-rust-regexp') do |spec|
   spec.version = '0.0.1'
   spec.description = 'Rust regexp for MRuby'
 
+  spec.add_dependency 'mruby-array-ext', core: 'mruby-array-ext'
   spec.add_dependency 'mruby-mtest',     mgem: 'mruby-mtest'
   spec.add_dependency 'mferuby-runtime', github: 'hone/mferuby', branch: 'wip'
 

@@ -1,3 +1,70 @@
+class RegexpError < StandardError
+end
+
+class RustRegexpFlags
+  VALID = ['m', 'i', 'x'].freeze
+
+  attr_reader :ignore_case, :extended, :multi_line
+
+  def initialize(mask)
+    case mask.nil?
+    when true
+      @ignore_case = true
+    else
+      if mask.is_a? Fixnum
+        @ignore_case = (mask & RustRegexp::IGNORECASE == RustRegexp::IGNORECASE)
+        @extended = (mask & RustRegexp::EXTENDED == RustRegexp::EXTENDED)
+        @multi_line = (mask & RustRegexp::MULTILINE == RustRegexp::MULTILINE)
+
+      elsif mask.is_a? String
+        validate_char_flags(mask)
+        @ignore_case = (mask.include? 'i')
+        @extended = (mask.include? 'x')
+        @multi_line = (mask.include? 'm')
+      end
+    end
+  end
+
+  def validate_char_flags(string)
+    string.chars.each do |x|
+      raise ArgumentError.new("unknown regexp flag: #{x}") unless VALID.include?(x)
+    end
+  end
+
+  def to_s
+    enabled = []
+
+    enabled.push('m') if multi_line
+    enabled.push('i') if ignore_case
+    enabled.push('x') if extended
+
+    disabled = []
+    disabled.push('m') unless multi_line
+    disabled.push('i') unless ignore_case
+    disabled.push('x') unless extended
+
+    noted = []
+    noted.push(enabled) if enabled.length > 0
+    noted.push('-') if disabled.length > 0
+    noted.push(disabled) if disabled.length > 0
+
+    noted.flatten.join('')
+  end
+
+  private
+  def ignore_case
+    @ignore_case ||= false
+  end
+
+  def extended
+    @extended ||= false
+  end
+
+  def multi_line
+    @multi_line ||= false
+  end
+end
+
 class RustRegexp
   IGNORECASE = 1
   EXTENDED = 2
@@ -32,9 +99,15 @@ class RustRegexp
   end
 
   def initialize(pattern, mask = 0, kcode = nil)
+    if pattern.is_a? RustRegexp
+      pattern = pattern.to_s
+    end
+
     @source = pattern
-    @mask = mask
+    raise ArgumentError if source.size == 0
+    @flags = RustRegexpFlags.new(mask)
     @kcode = kcode
+    raise RegexpError unless self.class.valid?(to_rust_pattern)
   end
 
   def =~(string)
@@ -47,7 +120,7 @@ class RustRegexp
 
     substring = string[position, string.length]
     submatches = self.class.get_submatches(
-      self.class.oxidize(source),
+      to_rust_pattern,
       substring
     )
 
@@ -57,7 +130,7 @@ class RustRegexp
     return self.class.set_last_match(nil) if submatches.empty?
 
     match_data = self.class.set_last_match(
-      RustMatchData.new(source, substring, submatches)
+      RustMatchData.new(self, substring, submatches)
     )
 
     if block_given?
@@ -74,6 +147,26 @@ class RustRegexp
 
   def ===(string)
     !match(string).nil?
+  end
+
+  def to_s
+    "(?#{flags.to_s}:#{source})"
+  end
+
+  def to_rust_pattern
+    self.class.oxidize(to_s)
+  end
+
+  def to_str
+    to_s
+  end
+
+  def flags
+    @flags ||= RustRegexpFlags.new(mask)
+  end
+
+  def mask
+    @mask
   end
 
   def self.set_last_match(match_data)

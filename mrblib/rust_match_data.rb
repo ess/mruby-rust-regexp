@@ -36,6 +36,20 @@ class RustMatchData
     to_a[*args]
   end
 
+  def offset(n)
+    [self.begin(n), self.end(n)]
+  end
+
+  def pre_match
+    string[0, self.begin(0)]
+  end
+
+  def post_match
+    e = self.end(0)
+    return '' if e.nil? || e >= string.length
+    string[e + 1, string.length - e - 1]
+  end
+
   def begin(n)
     raise IndexError if n > submatches.size - 1 || n < 0
 
@@ -60,6 +74,10 @@ class RustMatchData
 
   def to_s
     to_a.first
+  end
+
+  def length
+    to_a.length
   end
 
   def inspect
